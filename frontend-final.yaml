@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: frontend:1.0
+        ports:
+        - containerPort: 3000
+        env:
+        - name: VITE_USER_SERVICE_URL
+          value: "http://api-gateway/user-service"
+        - name: VITE_PRODUCT_SERVICE_URL
+          value: "http://api-gateway/product-service"
+        - name: VITE_ORDER_SERVICE_URL
+          value: "http://api-gateway/order-service"
+        - name: VITE_PAYMENT_SERVICE_URL
+          value: "http://api-gateway/payment-service"
+        - name: VITE_NOTIFICATION_SERVICE_URL
+          value: "http://api-gateway/notification-service"
+        command: ["/bin/sh"]
+        args: 
+        - -c
+        - |
+          # Corriger les URLs dans App.jsx
+          sed -i 's|http://localhost:3001|http://api-gateway/user-service|g' /app/src/App.jsx
+          sed -i 's|http://localhost:3002|http://api-gateway/product-service|g' /app/src/App.jsx  
+          sed -i 's|http://localhost:3003|http://api-gateway/order-service|g' /app/src/App.jsx
+          sed -i 's|http://localhost:${port}/health|http://api-gateway/health|g' /app/src/App.jsx
+          # Démarrer l'application
+          npm run dev -- --host

@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"frontend","namespace":"microservices"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"frontend"}},"template":{"metadata":{"labels":{"app":"frontend"}},"spec":{"containers":[{"args":["-c","# Corriger les URLs dans App.jsx\nsed -i 's|http://localhost:3001|http://api-gateway/user-service|g' /app/src/App.jsx\nsed -i 's|http://localhost:3002|http://api-gateway/product-service|g' /app/src/App.jsx  \nsed -i 's|http://localhost:3003|http://api-gateway/order-service|g' /app/src/App.jsx\nsed -i 's|http://localhost:${port}/health|http://api-gateway/health|g' /app/src/App.jsx\n# Démarrer l'application\nnpm run dev -- --host\n"],"command":["/bin/sh"],"env":[{"name":"VITE_USER_SERVICE_URL","value":"http://api-gateway/user-service"},{"name":"VITE_PRODUCT_SERVICE_URL","value":"http://api-gateway/product-service"},{"name":"VITE_ORDER_SERVICE_URL","value":"http://api-gateway/order-service"},{"name":"VITE_PAYMENT_SERVICE_URL","value":"http://api-gateway/payment-service"},{"name":"VITE_NOTIFICATION_SERVICE_URL","value":"http://api-gateway/notification-service"}],"image":"frontend:1.0","name":"frontend","ports":[{"containerPort":3000}]}]}}}}
+  creationTimestamp: "2025-10-18T16:22:02Z"
+  generation: 2
+  name: frontend
+  namespace: microservices
+  resourceVersion: "21350"
+  uid: f823b55b-95c4-40d0-bd5b-d32615187610
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-10-18T17:28:45+01:00"
+      creationTimestamp: null
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - args:
+        - -c
+        - "# Corriger les URLs dans App.jsx\nsed -i 's|http://localhost:3001|http://api-gateway/user-service|g'
+          /app/src/App.jsx\nsed -i 's|http://localhost:3002|http://api-gateway/product-service|g'
+          /app/src/App.jsx  \nsed -i 's|http://localhost:3003|http://api-gateway/order-service|g'
+          /app/src/App.jsx\nsed -i 's|http://localhost:${port}/health|http://api-gateway/health|g'
+          /app/src/App.jsx\n# Démarrer l'application\nnpm run dev -- --host\n"
+        command:
+        - /bin/sh
+        env:
+        - name: VITE_USER_SERVICE_URL
+          value: http://api-gateway/user-service
+        - name: VITE_PRODUCT_SERVICE_URL
+          value: http://api-gateway/product-service
+        - name: VITE_ORDER_SERVICE_URL
+          value: http://api-gateway/order-service
+        - name: VITE_PAYMENT_SERVICE_URL
+          value: http://api-gateway/payment-service
+        - name: VITE_NOTIFICATION_SERVICE_URL
+          value: http://api-gateway/notification-service
+        image: frontend:1.0
+        imagePullPolicy: IfNotPresent
+        name: frontend
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-10-18T16:22:03Z"
+    lastUpdateTime: "2025-10-18T16:22:03Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-10-18T16:22:02Z"
+    lastUpdateTime: "2025-10-18T16:28:46Z"
+    message: ReplicaSet "frontend-7475466f75" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 2
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

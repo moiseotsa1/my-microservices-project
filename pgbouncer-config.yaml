@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgbouncer-config
+  namespace: microservices
+data:
+  pgbouncer.ini: |
+    [databases]
+    ecommerce = host=postgres-primary port=5432 dbname=ecommerce
+    ecommerce_replica = host=postgres-replica port=5432 dbname=ecommerce_replica
+    
+    [pgbouncer]
+    listen_addr = *
+    listen_port = 6432
+    auth_type = md5
+    auth_file = /etc/pgbouncer/userlist.txt
+    pool_mode = transaction
+    max_client_conn = 100
+    default_pool_size = 20
+    log_connections = 1
+    log_disconnections = 1
+    
+  userlist.txt: |
+    "admin" "md5md5md5md5md5md5md5md5"

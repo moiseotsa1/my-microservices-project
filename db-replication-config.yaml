@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-replication-config
+  namespace: microservices
+data:
+  db-write-host: "postgres-primary"
+  db-read-host: "postgres-replica"
+  db-port: "5432"
+  db-user: "admin"
+  db-password: "password123"
+  db-name: "ecommerce"

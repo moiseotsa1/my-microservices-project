@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: node:18-alpine
+        ports:
+        - containerPort: 3001
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Créer un serveur simple et stable
+          cat > server.js << 'SERVER'
+          const express = require('express');
+          const { Pool } = require('pg');
+          const app = express();
+          const port = 3001;
+
+          console.log("Démarrage de User Service...");
+
+          const pool = new Pool({
+            host: process.env.DB_HOST || 'postgres-primary',
+            port: process.env.DB_PORT || 5432,
+            user: process.env.DB_USER || 'admin',
+            password: process.env.DB_PASSWORD || 'password123',
+            database: process.env.DB_NAME || 'ecommerce'
+          });
+
+          app.use(express.json());
+
+          // Health check simple
+          app.get('/health', (req, res) => {
+            res.json({ 
+              status: 'OK', 
+              service: 'user-service',
+              timestamp: new Date().toISOString()
+            });
+          });
+
+          // Endpoint users avec gestion d'erreur
+          app.get('/users', async (req, res) => {
+            try {
+              const result = await pool.query('SELECT * FROM users');
+              res.json({ 
+                users: result.rows, 
+                count: result.rowCount,
+                timestamp: new Date().toISOString()
+              });
+            } catch (error) {
+              console.error('Database error:', error);
+              res.status(500).json({ 
+                error: 'Database unavailable',
+                details: error.message 
+              });
+            }
+          });
+
+          app.listen(port, () => {
+            console.log(\`User Service running on port \${port}\`);
+            console.log('Health check: http://localhost:' + port + '/health');
+          });
+          SERVER
+          
+          # Installer les dépendances puis démarrer
+          echo "Installation des dépendances..."
+          npm init -y
+          npm install express pg
+          echo "Démarrage du serveur..."
+          node server.js
+        env:
+        - name: DB_HOST
+          value: "postgres-primary"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_USER
+          value: "admin"
+        - name: DB_PASSWORD
+          value: "password123"
+        - name: DB_NAME
+          value: "ecommerce"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service-clusterip
+  labels:
+    app: payment-service
+spec:
+  # Le sélecteur doit correspondre aux labels de vos Pods du Payment Service
+  selector:
+    app: payment-service
+  ports:
+    - protocol: TCP
+      port: 30005      # Le port du Service K8s
+      targetPort: 30005 # Le port du conteneur
+  type: ClusterIP

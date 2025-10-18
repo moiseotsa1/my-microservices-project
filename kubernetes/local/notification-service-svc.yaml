@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service-clusterip
+  labels:
+    app: notification-service
+spec:
+  # Le sélecteur doit correspondre aux labels de vos Pods du Notification Service
+  selector:
+    app: notification-service
+  ports:
+    - protocol: TCP
+      port: 30004      # Le port du Service K8s
+      targetPort: 30004 # Le port du conteneur
+  type: ClusterIP

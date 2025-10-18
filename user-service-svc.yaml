@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service-clusterip
+  labels:
+    app: user-service
+spec:
+  # Le sélecteur doit correspondre aux labels de vos Pods du User Service
+  selector:
+    app: user-service
+  ports:
+    - protocol: TCP
+      port: 30001      # Le port du Service K8s (pour la communication interne)
+      targetPort: 30001 # Le port sur lequel le conteneur du Pod écoute
+  type: ClusterIP      # Standard pour la communication interne

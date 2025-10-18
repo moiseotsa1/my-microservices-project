@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: node:18-alpine
+        ports:
+        - containerPort: 3001
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Créer un serveur HTTP simple sans base de données
+          cat > server.js << 'SRV'
+          const http = require('http');
+          const port = 3001;
+
+          const server = http.createServer((req, res) => {
+            if (req.url === '/health') {
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({
+                status: 'OK',
+                service: 'user-service-simple',
+                timestamp: new Date().toISOString()
+              }));
+            } else if (req.url === '/users') {
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({
+                users: [
+                  { id: 1, name: 'John Doe', email: 'john@example.com' },
+                  { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
+                ],
+                count: 2
+              }));
+            } else {
+              res.writeHead(404);
+              res.end('Not Found');
+            }
+          });
+
+          server.listen(port, () => {
+            console.log('User Service (simple) running on port ' + port);
+          });
+          SRV
+          node server.js
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi

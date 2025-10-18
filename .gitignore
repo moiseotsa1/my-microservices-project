@@ -1,0 +1,39 @@
+# Kubernetes
+**/*.key
+**/*.pem
+**/*.crt
+**/*.csr
+kubeconfig
+
+# Docker
+Dockerfile-*
+.dockerignore
+
+# Logs
+*.log
+logs/
+
+# Environnements
+.env
+.env.local
+.env.production
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporaires
+tmp/
+temp/

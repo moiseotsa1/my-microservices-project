@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-replica
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-replica
+  template:
+    metadata:
+      labels:
+        app: postgres-replica
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:13-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "admin"
+        - name: POSTGRES_PASSWORD
+          value: "password123"
+        - name: POSTGRES_DB
+          value: "ecommerce"
+        - name: POSTGRES_HOST
+          value: "postgres-primary"
+        - name: POSTGRES_INITDB_ARGS
+          value: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+        command:
+        - bash
+        - -c
+        - |
+          # Attendre que le primary soit prêt
+          until pg_isready -h postgres-primary -p 5432 -U admin; do
+            echo "En attente du primary PostgreSQL..."
+            sleep 5
+          done
+          
+          # Configurer la réplication (mode simple pour débuter)
+          echo "Configuration du replica..."
+          pg_basebackup -h postgres-primary -D /var/lib/postgresql/data -U admin -P -v -R
+          
+          # Démarrer PostgreSQL
+          exec postgres
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-replica-pv-claim

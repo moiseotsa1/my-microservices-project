@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: microservices
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+
+        # Route pour le user-service (ancienne URL :3001)
+        location /user-service/ {
+            proxy_pass http://user-service:3001/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+        location /api/users/ {
+            proxy_pass http://user-service:3001/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        # Route pour le product-service (ancienne URL :3002)
+        location /product-service/ {
+            proxy_pass http://product-service:3002/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+        location /api/products/ {
+            proxy_pass http://product-service:3002/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        # Route pour le order-service (ancienne URL :3003)
+        location /order-service/ {
+            proxy_pass http://order-service:3003/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+        location /api/orders/ {
+            proxy_pass http://order-service:3003/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        # Route pour le payment-service
+        location /payment-service/ {
+            proxy_pass http://payment-service:3004/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+        location /api/payments/ {
+            proxy_pass http://payment-service:3004/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        # Route pour le notification-service
+        location /notification-service/ {
+            proxy_pass http://notification-service:3005/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+        location /api/notifications/ {
+            proxy_pass http://notification-service:3005/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        # Health checks
+        location /health {
+            return 200 "API Gateway OK";
+            add_header Content-Type text/plain;
+        }
+    }

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: microservices
+data:
+  VITE_API_GATEWAY_URL: "http://api-gateway"
+  VITE_USER_SERVICE_URL: "http://api-gateway/api/users"
+  VITE_PRODUCT_SERVICE_URL: "http://api-gateway/api/products"
+  VITE_ORDER_SERVICE_URL: "http://api-gateway/api/orders"
+  VITE_PAYMENT_SERVICE_URL: "http://api-gateway/api/payments"
+  VITE_NOTIFICATION_SERVICE_URL: "http://api-gateway/api/notifications"

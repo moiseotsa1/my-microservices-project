@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: frontend:1.0  # Votre image originale
+        ports:
+        - containerPort: 3000
+        env:
+        - name: VITE_API_GATEWAY_URL
+          value: "http://api-gateway"
+        # Ces variables remplaceront les localhost dans App-config.js
+        - name: VITE_USER_SERVICE_URL
+          value: "http://api-gateway/user-service"
+        - name: VITE_PRODUCT_SERVICE_URL
+          value: "http://api-gateway/product-service"
+        - name: VITE_ORDER_SERVICE_URL
+          value: "http://api-gateway/order-service"
+        - name: VITE_PAYMENT_SERVICE_URL
+          value: "http://api-gateway/payment-service"
+        - name: VITE_NOTIFICATION_SERVICE_URL
+          value: "http://api-gateway/notification-service"
+        command: ["/bin/sh"]
+        args: ["-c", "sed -i 's|http://localhost:3001|http://api-gateway/user-service|g' src/App.jsx && 
+                     sed -i 's|http://localhost:3002|http://api-gateway/product-service|g' src/App.jsx && 
+                     sed -i 's|http://localhost:3003|http://api-gateway/order-service|g' src/App.jsx && 
+                     sed -i 's|http://localhost:\\${port}/health|http://api-gateway/health|g' src/App.jsx && 
+                     npm run dev -- --host"]

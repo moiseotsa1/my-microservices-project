@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-test
+  namespace: microservices
+spec:
+  template:
+    spec:
+      containers:
+      - name: load-test
+        image: jordi/ab
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "=== TEST DE CHARGE USER-SERVICE ==="
+          ab -n 200 -c 20 http://user-service:3001/health
+          
+          echo "=== TEST DE CHARGE PRODUCT-SERVICE ==="
+          ab -n 200 -c 20 http://product-service:3002/health
+          
+          echo "=== TEST DE CHARGE ORDER-SERVICE ==="
+          ab -n 200 -c 20 http://order-service:3003/health
+          
+          echo "✅ Tests de charge terminés"
+      restartPolicy: Never
+  backoffLimit: 0
