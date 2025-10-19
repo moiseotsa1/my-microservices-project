@@ -1,13 +1,2 @@
-stages:
-  - test
-
-test_pipeline:
-  stage: test
-  script:
-    - echo "Pipeline GitLab CI/CD Activated Successfully"
-    - echo "Project: Microservices Architecture"
-    - echo "Author: Moise"
-    - echo "CI/CD Now Operational"
-    - echo "Date: $(date)"
-  only:
-    - main
+test_job:
+  script: echo "GitLab CI/CD Pipeline is now working"
