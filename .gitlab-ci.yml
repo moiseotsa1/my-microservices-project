@@ -4,10 +4,10 @@ stages:
 test_pipeline:
   stage: test
   script:
-    - echo "í¾‰ Pipeline GitLab CI/CD ActivÃ© !"
-    - echo "âœ… Projet: Architecture Microservices"
-    - echo "í±¤ Auteur: Moise"
-    - echo "íº€ CI/CD Maintenant OpÃ©rationnel"
-    - echo "í³… Date: $(date)"
+    - echo "Pipeline GitLab CI/CD Activated Successfully"
+    - echo "Project: Microservices Architecture"
+    - echo "Author: Moise"
+    - echo "CI/CD Now Operational"
+    - echo "Date: $(date)"
   only:
     - main
