@@ -4,7 +4,7 @@
   "description": "Product Management Microservice",
   "main": "src/app.js",
   "scripts": {
-    "start": "node src/app.js",
+    "start": "node server-simple.js",
     "dev": "nodemon src/app.js"
   },
   "dependencies": {
