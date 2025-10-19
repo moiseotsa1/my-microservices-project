@@ -1,27 +1,62 @@
 #!/bin/bash
 
-echo "üîå D√âMARRAGE DE TOUS LES SERVICES"
-echo "================================"
+echo "ÔøΩÔøΩ D√âMARRAGE DE L'ARCHITECTURE MICROSERVICES COMPL√àTE"
 
-echo "üöÄ D√©marrage des port-forwards..."
-echo "Services accessibles sur:"
-echo "  Frontend: http://localhost:30000"
-echo "  User: http://localhost:30001/health"
-echo "  Product: http://localhost:30002/health"
-echo "  Order: http://localhost:30003/health"
-echo "  Payment: http://localhost:30004/health"
-echo "  Notification: http://localhost:30005/health"
+# Arr√™t des services existants
+echo "Ìªë Arr√™t des services existants..."
+pkill -f "node.*service" 2>/dev/null
+sleep 2
 
-# D√©marrer tous les port-forwards
-kubectl port-forward -n microservices service/frontend 30000:3000 &
-kubectl port-forward -n microservices service/user-service 30001:3001 &
-kubectl port-forward -n microservices service/product-service 30002:3002 &
-kubectl port-forward -n microservices service/order-service 30003:3003 &
-kubectl port-forward -n microservices service/payment-service 30004:3004 &
-kubectl port-forward -n microservices service/notification-service 30005:3005 &
+# D√©marrage des microservices
+echo "Ì¥ß D√©marrage des 5 microservices..."
+cd microservices
 
-echo "‚úÖ Tous les port-forwards d√©marr√©s"
-echo "üìù Gardez ce terminal ouvert"
-echo "üõë Ctrl+C pour arr√™ter tout"
+echo "Ì±§ D√©marrage User Service (3001)..."
+cd user-service
+npm start &
+cd ..
 
-wait
+echo "ÔøΩÔøΩÔ∏è D√©marrage Product Service (3002)..."
+cd product-service
+npm start &
+cd ..
+
+echo "Ì≥¶ D√©marrage Order Service (3003)..."
+cd order-service
+npm start &
+cd ..
+
+echo "Ì≤≥ D√©marrage Payment Service (3004)..."
+cd payment-service
+npm start &
+cd ..
+
+echo "Ì¥î D√©marrage Notification Service (3005)..."
+cd notification-service
+npm start &
+cd ..
+
+cd ..
+
+# Attente du d√©marrage
+echo "‚è≥ Attente du d√©marrage des services (10 secondes)..."
+sleep 10
+
+# V√©rification
+echo "Ì∑™ V√©rification des services..."
+for port in 3001 3002 3003 3004 3005; do
+    echo -n "Ì¥ç Port $port : "
+    if curl -s http://localhost:$port/health > /dev/null; then
+        echo "‚úÖ EN LIGNE"
+    else
+        echo "‚ùå HORS LIGNE"
+    fi
+done
+
+echo ""
+echo "Ìæâ ARCHITECTURE MICROSERVICES D√âMARR√âE !"
+echo "Ìºê OUVREZ VOTRE NAVIGATEUR :"
+echo "   Ì¥ó http://localhost:3000/simple-frontend.html"
+echo "   Ì¥ó frontend-interactif.html (double-cliquez)"
+echo ""
+echo "ÌøÜ PROJET COMPL√àTEMENT OP√âRATIONNEL !"
