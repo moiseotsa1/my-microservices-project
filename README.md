@@ -67,3 +67,12 @@ kubectl scale deployment user-service --replicas=3 -n microservices
 - ✅ Health checks et résilience
 - ✅ Base de données répliquée
 # GitLab CI/CD Trigger - Sun, Oct 19, 2025 11:01:52 PM
+
+## ��� CI/CD Status
+
+### GitHub Actions
+![GitHub Actions](https://github.com/moiseotsa1/my-microservices-project/actions/workflows/validate.yml/badge.svg)
+
+### GitLab CI/CD
+![GitLab CI](https://gitlab.com/Moise19/my-microservices-project/badges/main/pipeline.svg)
+
